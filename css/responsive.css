@@ -1,0 +1,181 @@
+/* Responsive Design untuk Mobile */
+@media (max-width: 768px) {
+    /* Dashboard */
+    .dashboard-content {
+        padding: 15px;
+    }
+    
+    /* Cards */
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    /* Tables */
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    /* Forms */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Mencegah zoom pada iOS */
+    }
+    
+    /* Modal */
+    .modal-content {
+        margin: 20px;
+        width: auto;
+        max-width: none;
+    }
+    
+    /* Upload area */
+    .upload-area {
+        padding: 20px;
+    }
+    
+    /* Navigation */
+    .navbar {
+        padding: 10px;
+    }
+    
+    .nav-brand {
+        font-size: 1.2em;
+    }
+    
+    /* Tabs */
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    /* Filter bar */
+    .filter-bar {
+        flex-direction: column;
+    }
+    
+    .filter-select,
+    .filter-bar input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* Buttons */
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* Exam page */
+    .exam-container {
+        flex-direction: column;
+    }
+    
+    .question-container {
+        width: 100%;
+        margin-right: 0;
+    }
+    
+    .question-grid {
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    /* Timer */
+    .timer {
+        font-size: 20px;
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 10px;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Options */
+    .option {
+        padding: 15px;
+        font-size: 16px;
+    }
+    
+    /* Navigation buttons */
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .nav-btn {
+        width: 100%;
+    }
+    
+    /* Question grid */
+    .question-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+    }
+    
+    .question-grid-item {
+        width: auto;
+        height: 40px;
+    }
+}
+
+/* Untuk layar sangat kecil (handphone) */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8em;
+    }
+    
+    .role-card {
+        padding: 20px;
+    }
+    
+    .role-icon {
+        font-size: 3em;
+    }
+    
+    .login-container {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .question-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Landscape mode */
+@media (orientation: landscape) and (max-height: 480px) {
+    .modal-content {
+        max-height: 90vh;
+        margin: 10px auto;
+    }
+    
+    .question-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .question-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}

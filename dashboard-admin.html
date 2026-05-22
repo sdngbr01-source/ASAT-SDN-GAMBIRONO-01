@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Web Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR KIRI ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            z-index: 100;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            border: 3px solid #3b82f6;
+            object-fit: cover;
+        }
+
+        .sidebar-header h3 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .sidebar-header p {
+            color: #94a3b8;
+            font-size: 0.7rem;
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            margin: 4px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            width: 24px;
+            font-size: 1.1rem;
+        }
+
+        .menu-item:hover {
+            background: rgba(59,130,246,0.2);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37,99,235,0.3);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px 30px;
+            min-height: 100vh;
+        }
+
+        /* ========== TOP BAR ========== */
+        .top-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .page-title h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .page-title p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .status-connected { background: #dcfce7; color: #166534; }
+        .status-disconnected { background: #fee2e2; color: #991b1b; }
+        .status-checking { background: #fef9c3; color: #854d0e; }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-connected .status-dot { background: #22c55e; }
+        .status-disconnected .status-dot { background: #ef4444; }
+        .status-checking .status-dot { background: #eab308; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* ========== TAB CONTENT ========== */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card h2, .card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* ========== FORM STYLES ========== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.85rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-info {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        /* ========== FILTER BAR ========== */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            min-width: 140px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ========== TABLES ========== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+
+        /* ========== UPLOAD AREA ========== */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        /* ========== TOAST ========== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .toast {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 260px;
+            animation: slideIn 0.3s;
+            border-left: 4px solid;
+        }
+
+        .toast-success { border-left-color: #10b981; }
+        .toast-error { border-left-color: #ef4444; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ========== STATUS BADGES ========== */
+        .status-badge,
+        .exam-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-selesai { background: #d1ecf1; color: #0c5460; }
+        .status-login { background: #d4edda; color: #155724; }
+        .status-blocked { background: #f8d7da; color: #721c24; }
+
+        /* ========== JAWABAN KOREKSI ========== */
+        .jawaban-list {
+            margin-top: 20px;
+        }
+
+        .jawaban-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* ========== LOGO UPLOAD ========== */
+        .logo-upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logo-upload-area:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .col-6 {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        /* ========== TOMBOL RESET ========== */
+        .btn-reset {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            background: #e0a800;
+            transform: scale(1.05);
+        }
+
+        .btn-reset:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 101;
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+            .filter-bar {
+                flex-direction: column;
+            }
+            .filter-select {
+                width: 100%;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <!-- SIDEBAR KIRI -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo" onerror="this.src='https://placehold.co/70x70?text=Logo'">
+            <h3>Web Assessment</h3>
+            <p>SDN Gambirono 01</p>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" onclick="switchTab('kelas')">
+                <i class="fas fa-building"></i> <span>Manajemen Kelas</span>
+            </div>
+            <div class="menu-item active" onclick="switchTab('user')">
+                <i class="fas fa-users"></i> <span>Manajemen User</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('soal')">
+                <i class="fas fa-question-circle"></i> <span>Manajemen Soal</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('setting')">
+                <i class="fas fa-sliders-h"></i> <span>Setting Soal & Nilai</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('nilai')">
+                <i class="fas fa-chart-simple"></i> <span>Manajemen Nilai</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('koreksi')">
+                <i class="fas fa-edit"></i> <span>Koreksi Essay</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('statuslogin')">
+                <i class="fas fa-shield-alt"></i> <span>Status Login Siswa</span>
+            </div>
+            <div class="menu-item" onclick="switchTab('laporan')">
+                <i class="fas fa-download"></i> <span>Download Laporan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard Admin</h2>
+                <p>Kelola ujian, soal, dan nilai siswa</p>
+            </div>
+            <div class="user-info">
+                <div id="firebaseStatus" class="connection-status status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Mengecek koneksi...</span>
+                </div>
+                <span id="userName" style="font-weight: 600;">Admin</span>
+                <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+
+        <div id="toastContainer" class="toast-container"></div>
+
+        <!-- TAB MANAJEMEN KELAS -->
+        <div id="tab-kelas" class="tab-content">
+            <h2>Manajemen Kelas</h2>
+            <div class="card-container">
+                <div class="card">
+                    <h3>➕ Tambah Kelas Baru</h3>
+                    <form id="tambahKelasForm" onsubmit="return tambahKelas(event)">
+                        <div class="form-group">
+                            <label>Nama Kelas</label>
+                            <input type="text" id="namaKelas" required placeholder="Contoh: 5A, 5B, 6A, 4A">
+                            <small style="color: #666;">Format: Angka + Huruf (contoh: 4A, 4B, 4C)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Tingkatan Kelas</label>
+                            <select id="tingkatanKelas" required>
+                                <option value="">Pilih Tingkatan</option>
+                                <option value="1">Kelas 1 SD</option>
+                                <option value="2">Kelas 2 SD</option>
+                                <option value="3">Kelas 3 SD</option>
+                                <option value="4">Kelas 4 SD</option>
+                                <option value="5">Kelas 5 SD</option>
+                                <option value="6">Kelas 6 SD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Wali Kelas (Opsional)</label>
+                            <input type="text" id="waliKelas" placeholder="Nama wali kelas">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="statusKelas">
+                                <option value="aktif">Aktif</option>
+                                <option value="nonaktif">Nonaktif</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Kelas</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3>📋 Daftar Kelas</h3>
+                    <div class="filter-bar">
+                        <select id="filterStatusKelas" class="filter-select" onchange="loadKelas()">
+                            <option value="">Semua Status</option>
+                            <option value="aktif">Aktif</option>
+                            <option value="nonaktif">Nonaktif</option>
+                        </select>
+                        <button class="btn btn-warning" onclick="exportKelasToExcel()">📊 Export ke Excel</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="kelasTable">
+                            <thead>
+                                <tr><th>No</th><th>Nama Kelas</th><th>Tingkatan</th><th>Wali Kelas</th><th>Jumlah Siswa</th><th>Status</th><th>Aksi</th></tr>
+                            </thead>
+                            <tbody id="kelasTableBody"><tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB MANAJEMEN USER -->
+        <div id="tab-user" class="tab-content active">
+            <h2>Manajemen User</h2>
+            <div class="card">
+                <div class="filter-bar">
+                    <select id="filterKelasUser" class="filter-select"><option value="">Semua Kelas</option></select>
+                    <button class="btn btn-primary" onclick="showUploadModal()">📤 Upload Data Siswa</button>
+                    <button class="btn btn-success" onclick="downloadTemplate()">📥 Download Template</button>
+                </div>
+                <div class="table-container">
+                    <table id="userTable">
+                        <thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Aksi</th></tr></thead>
+                        <tbody id="userTableBody"><tr><td colspan="5" style="text-align: center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB MANAJEMEN SOAL -->
+        <div id="tab-soal" class="tab-content">
+            <h2>Manajemen Soal</h2>
+            <div class="card">
+                <div class="filter-bar">
+                    <select id="filterKelasSoal" class="filter-select"><option value="">Pilih Kelas</option></select>
+                    <select id="filterMapelSoal" class="filter-select">
+                        <option value="">Pilih Mata Pelajaran</option>
+                        <option value="Pendidikan Pancasila">Pendidikan Pancasila</option>
+                        <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+                        <option value="Matematika">Matematika</option>
+                        <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                        <option value="IPAS">IPAS</option>
+                        <option value="IPS">IPS</option>
+                        <option value="PPKn">PPKn</option>
+                        <option value="PJOK">PJOK</option>
+                        <option value="SBdP">SBdP</option>
+                        <option value="Bahasa inggris">Bahasa Inggris</option>
+                        <option value="Bahasa Jawa">Bahasa Jawa</option>
+                        <option value="Baca Tulis Alquran">Baca Tulis Alquran</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="showUploadSoalModal()">📤 Upload Soal</button>
+                </div>
+                <div class="table-container">
+                    <table id="soalTable">
+                        <thead><tr><th>No</th><th>Kelas</th><th>Mapel</th><th>Tipe</th><th>Soal</th><th>Gambar</th><th>Aksi</th></tr></thead>
+                        <tbody id="soalTableBody"><tr><td colspan="7" style="text-align: center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB SETTING SOAL & NILAI -->
+        <div id="tab-setting" class="tab-content">
+            <h2>Setting Soal & Nilai</h2>
+            <div class="card">
+                <div class="card" style="margin-top: 20px;">
+                    <h3>📋 Daftar Ujian Aktif</h3>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>No</th><th>Kelas</th><th>Mata Pelajaran</th><th>Komposisi Soal</th><th>Nilai Maks</th><th>Durasi</th><th>Status</th><th>Aksi</th></tr></thead>
+                            <tbody id="examListBody"><tr><td colspan="8" style="text-align: center;">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                <h3>Setting Ujian Baru</h3>
+                <form id="examSettingForm">
+                    <div class="form-group">
+                        <label>Kelas</label>
+                        <select id="settingKelas" required><option value="">Pilih Kelas</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mata Pelajaran</label>
+                        <select id="settingMapel" required>
+                            <option value="">Pilih Mapel</option>
+                            <option value="Pendidikan Pancasila">Pendidikan Pancasila</option>
+                            <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+                            <option value="Matematika">Matematika</option>
+                            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            <option value="IPAS">IPAS</option>
+                            <option value="IPS">IPS</option>
+                            <option value="PPKn">PPKn</option>
+                            <option value="PJOK">PJOK</option>
+                            <option value="SBdP">SBdP</option>
+                            <option value="Bahasa inggris">Bahasa Inggris</option>
+                            <option value="Bahasa Jawa">Bahasa Jawa</option>
+                            <option value="Baca Tulis Alquran">Baca Tulis Alquran</option>
+                        </select>
+                    </div>
+                    <h4>Jumlah Soal</h4>
+                    <div class="form-group"><label>Pilihan Ganda</label><input type="number" id="jmlPG" min="0" value="10"></div>
+                    <div class="form-group"><label>Isian Singkat</label><input type="number" id="jmlIsian" min="0" value="5"></div>
+                    <div class="form-group"><label>Uraian</label><input type="number" id="jmlUraian" min="0" value="3"></div>
+                    <h4>Nilai Per Soal</h4>
+                    <div class="form-group"><label>Nilai Pilihan Ganda</label><input type="number" id="nilaiPG" min="0" value="1"></div>
+                    <div class="form-group"><label>Nilai Isian</label><input type="number" id="nilaiIsian" min="0" value="2"></div>
+                    <div class="form-group"><label>Nilai Uraian</label><input type="number" id="nilaiUraian" min="0" value="3"></div>
+                    <div class="form-group"><label>Durasi (menit)</label><input type="number" id="durasi" min="1" value="60"></div>
+                    <button type="submit" class="btn btn-primary">Simpan Setting</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB MANAJEMEN NILAI -->
+        <div id="tab-nilai" class="tab-content">
+            <h2>Manajemen Nilai</h2>
+            <div class="card">
+                <div class="filter-bar">
+                    <select id="filterKelasNilai" class="filter-select"><option value="">Semua Kelas</option></select>
+                    <select id="filterMapelNilai" class="filter-select">
+                        <option value="">Semua Mapel</option>
+                        <option value="Pendidikan Pancasila">Pendidikan Pancasila</option>
+                        <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+                        <option value="Matematika">Matematika</option>
+                        <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                        <option value="IPAS">IPAS</option>
+                        <option value="IPS">IPS</option>
+                        <option value="PPKn">PPKn</option>
+                        <option value="PJOK">PJOK</option>
+                        <option value="SBdP">SBdP</option>
+                        <option value="Bahasa inggris">Bahasa Inggris</option>
+                        <option value="Bahasa Jawa">Bahasa Jawa</option>
+                        <option value="Baca Tulis Alquran">Baca Tulis Alquran</option>
+                    </select>
+                    <input type="text" id="searchSiswa" placeholder="Cari siswa..." class="filter-select">
+                    <button class="btn btn-primary" onclick="loadNilai()">Filter</button>
+                </div>
+                <div class="table-container">
+                    <table id="nilaiTable">
+                        <thead><tr><th>No</th><th>Nama</th><th>Kelas</th><th>Mapel</th><th>Nilai PG</th><th>Nilai Isian</th><th>Nilai Uraian</th><th>Nilai Total</th><th>Status</th></tr></thead>
+                        <tbody id="nilaiTableBody"><tr><td colspan="9" style="text-align: center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB KOREKSI ESSAY -->
+        <div id="tab-koreksi" class="tab-content">
+            <h2>Koreksi Jawaban Essay</h2>
+            <div class="card">
+                <div class="filter-bar" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+                    <div class="filter-group" style="min-width: 150px;">
+                        <label>📚 Pilih Kelas</label>
+                        <select id="filterKelasKoreksi" class="filter-select"><option value="">Pilih Kelas</option></select>
+                    </div>
+                    <div class="filter-group" style="min-width: 150px;">
+                        <label>📖 Pilih Mata Pelajaran</label>
+                        <select id="filterMapelKoreksi" class="filter-select">
+                            <option value="">Pilih Mata Pelajaran</option>
+                            <option value="Pendidikan Pancasila">Pendidikan Pancasila</option>
+                            <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+                            <option value="Matematika">Matematika</option>
+                            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            <option value="IPAS">IPAS</option>
+                            <option value="IPS">IPS</option>
+                            <option value="PPKn">PPKn</option>
+                            <option value="PJOK">PJOK</option>
+                            <option value="SBdP">SBdP</option>
+                            <option value="Bahasa inggris">Bahasa Inggris</option>
+                            <option value="Bahasa Jawa">Bahasa Jawa</option>
+                            <option value="Baca Tulis Alquran">Baca Tulis Alquran</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="min-width: 150px;">
+                        <label>👨‍🎓 Pilih Siswa</label>
+                        <select id="filterSiswaKoreksi" class="filter-select"><option value="">Pilih Siswa</option></select>
+                    </div>
+                    <button class="btn btn-primary" onclick="loadJawabanKoreksi()">🔍 Tampilkan</button>
+                </div>
+                <div id="jawabanList" class="jawaban-list"></div>
+            </div>
+        </div>
+
+        <!-- TAB STATUS LOGIN SISWA -->
+        <div id="tab-statuslogin" class="tab-content">
+            <h2>🔐 Manajemen Status Login Siswa</h2>
+            <div class="card">
+                <div class="filter-bar" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+                    <div class="filter-group"><label>📚 Filter Kelas</label><select id="statusFilterKelas" class="filter-select" onchange="loadStatusLogin()"><option value="">Semua Kelas</option></select></div>
+                    <div class="filter-group"><label>📖 Filter Mapel</label><select id="statusFilterMapel" class="filter-select" onchange="loadStatusLogin()"><option value="">Semua Mapel</option><option value="Pendidikan Pancasila">Pendidikan Pancasila</option><option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option><option value="Matematika">Matematika</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="IPAS">IPAS</option><option value="IPS">IPS</option><option value="PPKn">PPKn</option><option value="PJOK">PJOK</option><option value="SBdP">SBdP</option><option value="Bahasa inggris">Bahasa Inggris</option><option value="Bahasa Jawa">Bahasa Jawa</option><option value="Baca Tulis Alquran">Baca Tulis Alquran</option></select></div>
+                    <div class="filter-group"><label>🔍 Cari Nama/NIS</label><input type="text" id="statusFilterSearch" class="filter-input" placeholder="Ketik nama atau NIS..." onkeyup="loadStatusLogin()"></div>
+                    <div class="filter-group"><label>📌 Filter Status</label><select id="statusFilterStatus" class="filter-select" onchange="loadStatusLogin()"><option value="">Semua Status</option><option value="login">✅ Login / Aktif</option><option value="blocked">🔒 Diblokir</option><option value="selesai">📗 Selesai</option></select></div>
+                    <button class="btn btn-primary" onclick="loadStatusLogin()">🔍 Tampilkan</button>
+                    <button class="btn btn-warning" onclick="resetStatusFilter()">↺ Reset</button>
+                </div>
+                <div class="table-container">
+                    <table id="statusLoginTable" style="width: 100%;">
+                        <thead><tr><th>No</th><th>Nama Siswa</th><th>NIS</th><th>Kelas</th><th>Mata Pelajaran</th><th>Status</th><th>Sisa Kesempatan</th><th>Terakhir Update</th><th>Aksi</th></tr></thead>
+                        <tbody id="statusLoginTableBody"><tr><td colspan="9" style="text-align: center;">Loading...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB DOWNLOAD LAPORAN -->
+        <div id="tab-laporan" class="tab-content">
+            <h2>Download Laporan</h2>
+            <div class="card" style="margin-top: 20px;">
+                <h3>📄 Setting Header PDF Lembar Jawaban</h3>
+                <form id="pdfSettingForm" style="margin-top: 15px;">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group"><label>Nama Sekolah (bisa lebih dari 1 baris, gunakan Enter untuk baris baru)</label><textarea id="sekolahNama" class="filter-input" rows="3" placeholder="SD NEGERI 01 JAKARTA&#10;TERAKREDITASI A"></textarea></div>
+                            <div class="form-group"><label>Alamat Sekolah (bisa lebih dari 1 baris)</label><textarea id="sekolahAlamat" class="filter-input" rows="2" placeholder="Jl. Pendidikan No. 123&#10;Kel. Menteng, Kec. Menteng"></textarea></div>
+                            <div class="form-group"><label>Kota/Kabupaten</label><input type="text" id="sekolahKota" class="filter-input" placeholder="Jakarta Pusat"></div>
+                            <div class="form-group"><label>Telepon</label><input type="text" id="sekolahTelp" class="filter-input" placeholder="(021) 12345678"></div>
+                            <div class="form-group"><label>Email</label><input type="email" id="sekolahEmail" class="filter-input" placeholder="info@sekolah.sch.id"></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group"><label>Logo Kiri</label><div class="logo-upload-area" onclick="document.getElementById('logoKiriInput').click()"><div id="logoKiriPreview"><img id="logoKiriImg" src="" style="max-width: 80px; max-height: 80px; display: none;"></div><span>📁 Klik untuk upload logo kiri</span></div><input type="file" id="logoKiriInput" accept="image/*" style="display: none;" onchange="handleLogoUpload('kiri', this)"><input type="hidden" id="logoKiriData"></div>
+                            <div class="form-group"><label>Logo Kanan</label><div class="logo-upload-area" onclick="document.getElementById('logoKananInput').click()"><div id="logoKananPreview"><img id="logoKananImg" src="" style="max-width: 80px; max-height: 80px; display: none;"></div><span>📁 Klik untuk upload logo kanan</span></div><input type="file" id="logoKananInput" accept="image/*" style="display: none;" onchange="handleLogoUpload('kanan', this)"><input type="hidden" id="logoKananData"></div>
+                            <div class="form-group"><label>Motto Sekolah (bisa lebih dari 1 baris)</label><textarea id="sekolahMotto" class="filter-input" rows="2" placeholder="Berilmu, Beriman, Berakhlak Mulia&#10;Membangun Generasi Unggul"></textarea></div>
+                            <div class="form-group"><label>Warna Header</label><input type="color" id="headerWarna" class="filter-input" value="#2c3e50"></div>
+                            <div class="form-group"><label>Ukuran Logo (px)</label><div style="display: flex; gap: 10px;"><input type="number" id="logoWidth" class="filter-input" placeholder="Lebar" value="40" style="width: 80px;"><input type="number" id="logoHeight" class="filter-input" placeholder="Tinggi" value="40" style="width: 80px;"></div></div>
+                        </div>
+                    </div>
+                    <div class="preview-header" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;"><h4>Preview Header:</h4><div id="pdfPreview" style="border: 1px solid #ddd; padding: 15px; background: white; border-radius: 5px; min-height: 150px;"></div></div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;"><button type="submit" class="btn btn-primary">💾 Simpan Setting PDF</button><button type="button" class="btn btn-info" onclick="loadPdfSetting()">🔄 Muat Setting</button><button type="button" class="btn btn-warning" onclick="resetPdfSetting()">↺ Reset Default</button></div>
+                </form>
+            </div>
+            <div class="card-container">
+                <div class="card"><h3>Download Per Kelas</h3><div class="form-group"><label>Pilih Kelas</label><select id="laporanKelas"></select></div><div class="form-group"><label>Pilih Mata Pelajaran</label><select id="laporanMapel"><option value="Pendidikan Pancasila">Pendidikan Pancasila</option><option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option><option value="Matematika">Matematika</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="IPAS">IPAS</option><option value="IPS">IPS</option><option value="PPKn">PPKn</option><option value="PJOK">PJOK</option><option value="SBdP">SBdP</option><option value="Bahasa inggris">Bahasa Inggris</option><option value="Bahasa Jawa">Bahasa Jawa</option><option value="Baca Tulis Alquran">Baca Tulis Alquran</option></select></div><button class="btn btn-primary" onclick="downloadLaporanKelas()">📥 Download Excel</button></div>
+                <div class="card"><h3>Generate Lembar Jawaban</h3><div class="form-group"><label>Pilih Kelas</label><select id="generateKelas"></select></div><div class="form-group"><label>Pilih Mata Pelajaran</label><select id="generateMapel"><option value="Pendidikan Pancasila">Pendidikan Pancasila</option><option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option><option value="Matematika">Matematika</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="IPAS">IPAS</option><option value="IPS">IPS</option><option value="PPKn">PPKn</option><option value="PJOK">PJOK</option><option value="SBdP">SBdP</option><option value="Bahasa inggris">Bahasa Inggris</option><option value="Bahasa Jawa">Bahasa Jawa</option><option value="Baca Tulis Alquran">Baca Tulis Alquran</option></select></div><button class="btn btn-primary" onclick="generateLembarJawaban()">📥 Generate PDF</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UPLOAD USER -->
+    <div id="uploadModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Upload Data Siswa</h3><span class="close-modal" onclick="closeUploadModal()">&times;</span></div><div class="modal-body"><div class="upload-area" onclick="document.getElementById('fileInput').click()"><div class="upload-icon">📁</div><p>Klik untuk upload file Excel</p><p style="font-size: 12px; color: #999;">Format: NIS, Nama, Kelas, Password</p></div><input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleFileUpload(this)"></div></div></div>
+
+    <!-- MODAL UPLOAD SOAL -->
+    <div id="uploadSoalModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Upload Soal</h3><span class="close-modal" onclick="closeUploadSoalModal()">&times;</span></div><div class="modal-body"><div style="display: flex; justify-content: space-between; margin-bottom: 15px;"><button class="btn btn-success" onclick="downloadTemplateSoal()">📥 Download Template Soal</button></div><form id="uploadSoalForm"><div class="form-group"><label>Kelas</label><select id="uploadKelas" required><option value="">Pilih Kelas</option></select></div><div class="form-group"><label>Mata Pelajaran</label><select id="uploadMapel" required><option value="">Pilih Mapel</option><option value="Pendidikan Pancasila">Pendidikan Pancasila</option><option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option><option value="Matematika">Matematika</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="IPAS">IPAS</option><option value="IPS">IPS</option><option value="PPKn">PPKn</option><option value="PJOK">PJOK</option><option value="SBdP">SBdP</option><option value="Bahasa inggris">Bahasa Inggris</option><option value="Bahasa Jawa">Bahasa Jawa</option><option value="Baca Tulis Alquran">Baca Tulis Alquran</option></select></div><div class="upload-area" onclick="document.getElementById('soalFileInput').click()"><div class="upload-icon">📁</div><p>Klik untuk upload file Excel</p><p style="font-size: 12px; color: #999;">Format: Tipe, Soal, Pilihan A, B, C, D, Kunci, Gambar (URL)</p></div><input type="file" id="soalFileInput" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleSoalUpload(this)"></form><div id="gambarPreview" style="margin-top: 20px; display: none;"><h4>Preview Gambar:</h4><img id="previewImage" src="" style="max-width: 100%; max-height: 200px;"></div></div></div></div>
+
+    <!-- MODAL RESET STATUS -->
+    <div id="resetStatusModal" class="modal" style="display: none;"><div class="modal-content" style="background: white; padding: 25px; border-radius: 10px; max-width: 400px; width: 90%; text-align: center;"><h3>🔓 Reset Status Siswa</h3><p id="resetModalMessage" style="margin: 20px 0;">Apakah Anda yakin ingin mereset status siswa ini?</p><div style="display: flex; gap: 10px; justify-content: center;"><button class="btn btn-primary" onclick="confirmResetStatus()">Ya, Reset</button><button class="btn btn-warning" onclick="closeResetStatusModal()">Batal</button></div></div></div>
+
+    <!-- SCRIPTS -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- JS ASLI ANDA (TIDAK DIRUBAH) -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/connection-status.js"></script>
+    <script src="js/dashboard-admin.js"></script>
+    <script src="js/management-kelas.js"></script>
+    <script src="js/management-user.js"></script>
+    <script src="js/management-soal.js"></script>
+    <script src="js/setting-soal.js"></script>
+    <script src="js/management-nilai.js"></script>
+    <script src="js/koreksi-essay.js"></script>
+    <script src="js/laporan-nilai.js"></script>
+    <script src="js/pdf-setting.js"></script>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            if (event && event.target) {
+                let target = event.target.closest('.menu-item');
+                if (target) target.classList.add('active');
+            }
+            if (typeof window.loadDataByTab === 'function') window.loadDataByTab(tabName);
+        }
+
+        window.switchTab = switchTab;
+    </script>
+</body>
+</html>

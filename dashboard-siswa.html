@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - Web Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Logo Area */
+        .logo-area {
+            text-align: center;
+            padding: 20px 0 10px 0;
+        }
+
+        .logo-area img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            border: 2px solid white;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            border-radius: 24px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            text-align: left;
+        }
+
+        .nav-brand .title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3a5f, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-brand .subtitle {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f8fafc;
+            padding: 8px 20px;
+            border-radius: 60px;
+        }
+
+        .nav-user span {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Kelas Info */
+        .kelas-info {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .kelas-info h2 {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .kelas-info h2 span {
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .section-title span {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #2563eb;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Card Container */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 18px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        /* Exam Header */
+        .exam-header {
+            background: white;
+            border-radius: 24px;
+            padding: 18px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .exam-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .timer {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 10px 25px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 800;
+            font-size: 1.4rem;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        /* Exam Container */
+        .exam-container {
+            display: grid;
+            grid-template-columns: 1fr 130px;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .exam-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .question-container {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .question-point {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        /* Image Styles */
+        .question-image-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .question-image {
+            max-width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .question-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #2563eb;
+            background: #f0f9ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            border-color: transparent;
+            color: white;
+        }
+
+        .option-marker {
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+
+        .option.selected .option-marker {
+            background: white;
+            color: #2563eb;
+        }
+
+        .option-text {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .option-text img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* Short Answer & Essay */
+        .short-answer input,
+        .essay-answer textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .short-answer input:focus,
+        .essay-answer textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .essay-answer textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        /* Navigation */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn.prev {
+            background: #64748b;
+            color: white;
+        }
+
+        .nav-btn.prev:hover {
+            background: #475569;
+            transform: translateX(-3px);
+        }
+
+        .nav-btn.next {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+
+        .nav-btn.next:hover {
+            transform: translateX(3px);
+            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+        }
+
+        .nav-btn.submit {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .nav-btn.submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(16,185,129,0.3);
+        }
+
+        /* Question Grid */
+        .question-grid {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .question-grid h2 {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .grid-items {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .question-grid-item {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .question-grid-item.answered {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .question-grid-item.current {
+            border: 3px solid #2563eb;
+            transform: scale(1.05);
+        }
+
+        .question-grid-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* Result Page */
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+        }
+
+        /* Image Modal */
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #modalImage {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+        }
+
+        #imageModal span {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Security Badge */
+        .security-badge {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #10b981;
+            font-size: 10px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-family: monospace;
+            z-index: 999;
+        }
+
+        /* Safe Exam Mode */
+        .safe-exam-active {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 15px;
+            }
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-brand {
+                text-align: center;
+            }
+            .nav-user {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+            .timer {
+                font-size: 1.1rem;
+                padding: 8px 18px;
+            }
+            .question-container {
+                padding: 18px;
+            }
+            .option {
+                padding: 12px 15px;
+            }
+            .option-text img {
+                width: 150px;
+                height: 50px;
+            }
+            .grid-items {
+                gap: 6px;
+            }
+            .question-grid-item {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Logo di atas navbar -->
+        <div class="logo-area">
+            <img src="logo.png" alt="Logo Sekolah" onerror="this.src='https://placehold.co/100x100?text=Logo'">
+        </div>
+        
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="title">Assesment Sumatif Akhir TAHUN (ASA-T)</div>
+                <div class="subtitle">SDN Gambirono 01 | Tahun Ajaran 2025/2026</div>
+            </div>
+            <div class="nav-user">
+                <span id="userName">Loading...</span>
+                <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+            </div>
+        </nav>
+        
+        <div class="dashboard-content">
+            <div id="kelasInfo" class="kelas-info">
+                <h2><i class="fas fa-users"></i> Kelas: <span id="kelasSiswa">-</span></h2>
+            </div>
+            
+            <!-- Menu Utama Siswa -->
+            <div id="mainMenu">
+                <div class="section-title">
+                    <h2><i class="fas fa-book-open"></i> Pilih Mata Pelajaran</h2>
+                    <span id="totalExams">0 Ujian</span>
+                </div>
+                <div class="card-container" id="subjectList">
+                    <!-- Akan diisi JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Halaman Ujian -->
+            <div id="examPage" style="display: none;">
+                <div class="exam-header">
+                    <h2 id="examSubject"></h2>
+                    <div class="timer" id="timer">60:00</div>
+                </div>
+                
+                <div class="exam-container">
+                    <div class="question-container" id="questionContainer">
+                        <!-- Akan diisi JavaScript -->
+                    </div>
+                    
+                    <div class="question-grid">
+                        <h2><i class="fas fa-grid"></i> Daftar Soal</h2>
+                        <div class="grid-items" id="questionGrid">
+                            <!-- Akan diisi JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Halaman Hasil -->
+            <div id="resultPage" style="display: none;">
+                <div class="section-title">
+                    <h2><i class="fas fa-chart-line"></i> Hasil Ujian</h2>
+                </div>
+                <div class="result-stats">
+                    <div class="stat-card">
+                        <div class="value" id="resultPG">0</div>
+                        <div class="label">Nilai Pilihan Ganda</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="resultIsian">0</div>
+                        <div class="label">Nilai Isian Singkat</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="resultUraian">0</div>
+                        <div class="label">Nilai Uraian</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="resultTotal">0</div>
+                        <div class="label">Total Nilai</div>
+                    </div>
+                </div>
+                <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> Kembali ke Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk preview gambar -->
+    <div id="imageModal" onclick="closeImageModal()">
+        <span>&times;</span>
+        <img id="modalImage">
+    </div>
+
+    <!-- Security Badge -->
+    <div class="security-badge" id="securityBadge">
+        <i class="fas fa-shield-alt"></i> Mode Ujian Aman
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/dashboard-siswa.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Gambar Soal</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        input, button { padding: 10px; margin: 10px 0; width: 100%; }
+        .result { margin-top: 20px; padding: 20px; border: 1px solid #ddd; }
+        img { max-width: 100%; max-height: 400px; }
+        .valid { color: green; }
+        .invalid { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test URL Gambar</h1>
+        <p>Masukkan URL gambar untuk mengecek apakah bisa ditampilkan</p>
+        
+        <input type="text" id="imageUrl" placeholder="https://example.com/gambar.jpg">
+        <button onclick="testImage()">Test Gambar</button>
+        
+        <div class="result" id="result">
+            <h3>Hasil:</h3>
+            <div id="imageContainer"></div>
+            <p id="status"></p>
+        </div>
+        
+        <h2>Contoh URL yang valid:</h2>
+        <ul>
+            <li>https://picsum.photos/400/300</li>
+            <li>https://images.unsplash.com/photo-1579546929518-9e396f3cc809</li>
+            <li>https://via.placeholder.com/400x300</li>
+        </ul>
+    </div>
+    
+    <script>
+        function testImage() {
+            const url = document.getElementById('imageUrl').value.trim();
+            const container = document.getElementById('imageContainer');
+            const status = document.getElementById('status');
+            
+            if (!url) {
+                alert('Masukkan URL gambar');
+                return;
+            }
+            
+            container.innerHTML = '';
+            status.innerHTML = 'Loading...';
+            
+            const img = new Image();
+            img.onload = function() {
+                container.innerHTML = `<img src="${url}" alt="Test Image">`;
+                status.innerHTML = '<span class="valid">✅ Gambar valid dan dapat dimuat</span>';
+            };
+            img.onerror = function() {
+                container.innerHTML = '';
+                status.innerHTML = '<span class="invalid">❌ Gambar tidak dapat dimuat. Cek URL atau CORS policy</span>';
+            };
+            img.src = url;
+        }
+    </script>
+</body>
+</html>
