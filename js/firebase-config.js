@@ -1,11 +1,11 @@
 // Konfigurasi Firebase
 const firebaseConfig = {
-   apiKey: "AIzaSyCksNT9rCQrG0dLV1b0Y3TV7R9NhFhCmO4",
-  authDomain: "asa-j-2026.firebaseapp.com",
-  projectId: "asa-j-2026",
-  storageBucket: "asa-j-2026.firebasestorage.app",
-  messagingSenderId: "837383753005",
-  appId: "1:837383753005:web:9ff358de89893debdb17a4"
+  apiKey: "AIzaSyAS32q7IfWRdQDRjjHrOgCziLDb2eeNi88",
+  authDomain: "asat-sdn-gambirono-01.firebaseapp.com",
+  projectId: "asat-sdn-gambirono-01",
+  storageBucket: "asat-sdn-gambirono-01.firebasestorage.app",
+  messagingSenderId: "773097585212",
+  appId: "1:773097585212:web:4c0e56c127f3688206e139"
 };
 
 // Inisialisasi Firebase
