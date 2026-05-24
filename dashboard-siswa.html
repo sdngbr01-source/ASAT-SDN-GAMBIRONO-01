@@ -355,11 +355,14 @@
         }
 
         .option-text img {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 12px;
-        }
+    width: 120px;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 4px;
+}
 
         /* Short Answer & Essay */
         .short-answer input,
@@ -613,10 +616,12 @@
             .option {
                 padding: 12px 15px;
             }
-            .option-text img {
-                width: 150px;
-                height: 50px;
-            }
+           .option-text img {
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+        max-height: 120px;
+    }	
             .grid-items {
                 gap: 6px;
             }
