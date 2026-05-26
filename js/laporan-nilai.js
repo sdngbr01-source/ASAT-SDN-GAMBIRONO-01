@@ -24,13 +24,45 @@ async function downloadLaporanKelas() {
             return;
         }
         
+        // Fungsi helper untuk mendapatkan nilai waktu (timestamp atau date)
+        function getWaktuValue(data) {
+            if (!data.waktu) return null;
+            
+            // Jika sudah berupa Date object
+            if (data.waktu instanceof Date) return data.waktu;
+            
+            // Jika berupa Firestore Timestamp
+            if (data.waktu.toDate && typeof data.waktu.toDate === 'function') {
+                return data.waktu.toDate();
+            }
+            
+            // Jika berupa string
+            if (typeof data.waktu === 'string') {
+                const parsed = new Date(data.waktu);
+                return isNaN(parsed.getTime()) ? null : parsed;
+            }
+            
+            // Jika berupa number (timestamp)
+            if (typeof data.waktu === 'number') {
+                return new Date(data.waktu);
+            }
+            
+            return null;
+        }
+        
         // Group by siswa (ambil data terbaru)
         const nilaiMap = new Map();
         snapshot.forEach(doc => {
             const nilai = doc.data();
             const key = nilai.siswaId;
             
-            if (!nilaiMap.has(key) || (nilai.waktu && nilai.waktu.toDate && nilai.waktu.toDate() > nilaiMap.get(key).waktu.toDate())) {
+            const currentWaktu = getWaktuValue(nilai);
+            const existing = nilaiMap.get(key);
+            const existingWaktu = existing ? getWaktuValue(existing) : null;
+            
+            if (!nilaiMap.has(key) || 
+                (currentWaktu && existingWaktu && currentWaktu > existingWaktu) ||
+                (currentWaktu && !existingWaktu)) {
                 nilaiMap.set(key, nilai);
             }
         });
@@ -58,18 +90,24 @@ async function downloadLaporanKelas() {
                 
                 // Cari nilai per soal dari data ujian
                 try {
-                    const examDoc = await examsRef.doc(nilai.examId).get();
-                    if (examDoc.exists) {
-                        const examData = examDoc.data();
-                        const nilaiPerSoalPG = examData.nilaiPerSoal?.pg || 5;
-                        const nilaiPerSoalIsian = examData.nilaiPerSoal?.isian || 5;
-                        const nilaiPerSoalUraian = examData.nilaiPerSoal?.uraian || 5;
-                        
-                        totalPG = jmlPG * nilaiPerSoalPG;
-                        totalIsian = jmlIsian * nilaiPerSoalIsian;
-                        totalUraian = jmlUraian * nilaiPerSoalUraian;
+                    if (nilai.examId) {
+                        const examDoc = await examsRef.doc(nilai.examId).get();
+                        if (examDoc.exists) {
+                            const examData = examDoc.data();
+                            const nilaiPerSoalPG = examData.nilaiPerSoal?.pg || 5;
+                            const nilaiPerSoalIsian = examData.nilaiPerSoal?.isian || 5;
+                            const nilaiPerSoalUraian = examData.nilaiPerSoal?.uraian || 5;
+                            
+                            totalPG = jmlPG * nilaiPerSoalPG;
+                            totalIsian = jmlIsian * nilaiPerSoalIsian;
+                            totalUraian = jmlUraian * nilaiPerSoalUraian;
+                        } else {
+                            // Default jika tidak ada data exam
+                            totalPG = jmlPG * 5;
+                            totalIsian = jmlIsian * 5;
+                            totalUraian = jmlUraian * 5;
+                        }
                     } else {
-                        // Default jika tidak ada data exam
                         totalPG = jmlPG * 5;
                         totalIsian = jmlIsian * 5;
                         totalUraian = jmlUraian * 5;
@@ -83,10 +121,10 @@ async function downloadLaporanKelas() {
             }
             
             // Hitung jumlah nilai diperoleh
-            const jumlahDiperoleh = nilaiPG + nilaiIsian + nilaiUraian;
+            const jumlahDiperoleh = (nilaiPG || 0) + (nilaiIsian || 0) + (nilaiUraian || 0);
             
             // Hitung jumlah nilai maksimal
-            const jumlahMaksimal = totalPG + totalIsian + totalUraian;
+            const jumlahMaksimal = (totalPG || 0) + (totalIsian || 0) + (totalUraian || 0);
             
             // HITUNG TOTAL NILAI AKHIR (0-100)
             let totalNilai = 0;
@@ -111,7 +149,7 @@ async function downloadLaporanKelas() {
                 nilaiPG,
                 nilaiIsian,
                 nilaiUraian,
-                totalNilai,  // Tampilkan nilai 0-100
+                totalNilai,
                 statusText
             ]);
         }
